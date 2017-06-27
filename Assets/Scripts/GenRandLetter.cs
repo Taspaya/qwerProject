@@ -63,13 +63,9 @@ public class GenRandLetter : MonoBehaviour {
 
 
 
-        if (lifeTime == 0 && level != 1)
+        if (lifeTime <= 0)
         {
             lifeTime = 0;
-            if (level <= 4)
-            {
-                level--;
-            }
         }
 
         if (lifeTime >= LastScore) {
