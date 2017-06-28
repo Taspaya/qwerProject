@@ -15,7 +15,8 @@ public class GenRandLetter : MonoBehaviour {
     public GameObject uno;
     public GameObject dos;
 
-
+    [SerializeField]
+    public Canvas canvasito;
 
     public GameObject[] Tecles;
 
@@ -73,7 +74,12 @@ public class GenRandLetter : MonoBehaviour {
             LastScore = maxScoreCalc();
             progressBar.maxValue = LastScore;
             level++; 
-                 
+                
+        }
+
+        if(level == 3)
+        {
+            nTecles = 6;
         }
 
     }
@@ -81,7 +87,15 @@ public class GenRandLetter : MonoBehaviour {
 
     float maxScoreCalc() {
 
-       return  LastScore + (LastScore * 0.2f);
+        if (level <= 3) {
+            return LastScore + (LastScore * 0.2f);
+        }
+        else
+        {
+
+            return LastScore + (LastScore * 0.05f);
+        }
+       
     }
 
     void updateUI() {
@@ -95,13 +109,13 @@ public class GenRandLetter : MonoBehaviour {
 
         if (!generated)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)  // DESACTIVEM LES TECLES AL GENERAR UNA TECLA NOVA
             {
 
                 Tecles[i].SetActive(false);
             }
 
-            a = Random.Range(0, 4);
+            a = Random.Range(0, nTecles);
             posX = Random.Range(-8, 8);
             posY = Random.Range(0, -7.3f);
             generated = true;
@@ -122,25 +136,36 @@ public class GenRandLetter : MonoBehaviour {
         generateRandomA();
 
         if (generated && Input.GetKeyDown(KeyCode.Q) && a == 0)
-        {     
+        {
             score++;
             lifeTime++;
             generated = false;
         }
         else if (generated && Input.GetKeyDown(KeyCode.W) && a == 1)
-        {        
+        {
             score++;
             lifeTime++;
             generated = false;
         }
         else if (generated && Input.GetKeyDown(KeyCode.E) && a == 2)
-        {       
+        {
             score++;
             lifeTime++;
             generated = false;
         }
         else if (generated && Input.GetKeyDown(KeyCode.R) && a == 3)
         {
+            score++;
+            lifeTime++;
+            generated = false;
+        }
+        else if (generated && Input.GetKeyDown(KeyCode.F) && a == 5) {
+            score++;
+            lifeTime++;
+            generated = false;
+        }
+        else if (generated && Input.GetKeyDown(KeyCode.D) && a == 4)
+        { 
             score++;
             lifeTime++;
             generated = false;
