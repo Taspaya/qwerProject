@@ -18,6 +18,8 @@ public class GenRandLetter : MonoBehaviour {
     [SerializeField]
     public Canvas canvasito;
 
+    public Image imagensita;            // Slider color for feedback
+
     public GameObject[] Tecles;
 
     public float lifeTime;             // Variable tiempo ""vida""
@@ -73,8 +75,8 @@ public class GenRandLetter : MonoBehaviour {
             lifeTime = 0;
             LastScore = maxScoreCalc();
             progressBar.maxValue = LastScore;
-            level++; 
-                
+            level++;
+            
         }
 
         if(level == 3)
@@ -122,7 +124,6 @@ public class GenRandLetter : MonoBehaviour {
            
             Tecles[a].SetActive(true);
             Tecles[a].transform.position = new Vector2(posX, posY);
-
         }
 
 
@@ -133,48 +134,56 @@ public class GenRandLetter : MonoBehaviour {
     }
     void set_a_getKey() {
 
-        generateRandomA();
-
+        generateRandomA();  // we generate random x & y and letter "a" 
+     
         if (generated && Input.GetKeyDown(KeyCode.Q) && a == 0)
         {
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.W) && a == 1)
         {
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.E) && a == 2)
         {
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.R) && a == 3)
         {
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.F) && a == 5) {
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.D) && a == 4)
         { 
             score++;
             lifeTime++;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.anyKeyDown)
         {
             vides--;
             lifeTime--;
             generated = false;
+            imagensita.GetComponent<Image>().color = new Color32(191, 0, 0, 255);
+
         }
     }
 }
