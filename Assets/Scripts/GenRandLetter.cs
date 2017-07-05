@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class GenRandLetter : MonoBehaviour {
 
+
+    // TECLES DEL TECLAT 
     [SerializeField]
     public GameObject Q;
     public GameObject W;
@@ -15,15 +17,17 @@ public class GenRandLetter : MonoBehaviour {
     public GameObject uno;
     public GameObject dos;
 
-    [SerializeField]
-    public Canvas canvasito;
+    public Image sliderColor;            // Slider color for feedback
+    public GameObject lvlchanger;             // imagen de transicion para canviar de nivel
 
-    public Image imagensita;            // Slider color for feedback
 
     public GameObject[] Tecles;
-
+    // Time variables
     public float lifeTime;             // Variable tiempo ""vida""
     public float keyActiveTime;        // Variable tiempo que esta activa la tecla
+    public float lvlupTime;            // Variable tiempo que tardara en desaparecer la imagen de cambio de nivel
+
+    // Variables
     public float posX, posY;           // Variable x e y random que tendrà la letra activa
     public int nTecles;                // Variable numero de teclas activas (segun la dificultad)      
     public int a;                      // Variable numero de la tecla que se generara aleatoriamente
@@ -45,41 +49,41 @@ public class GenRandLetter : MonoBehaviour {
     void Start () {
         nTecles = 4;                                                    // El juego comienza con solo 4 teclas, QWER;
         Tecles = new GameObject[8] { Q, W, E, R , D, F, uno, dos};      // Array que contiene las teclas que se van a generar
-
-        vides = 5;                                                      
         generated = false;
-    
-        lvlText.text = "Lvl: " + level; 
-       
+        lvlupTime = 0;
+
+
+        lvlText.text = "Lvl: " + level;                                 // Inicialicamos el texto del nivel en el "HUD"
+
+        sliderColor.GetComponent<Image>().color = new Color32(50, 50, 50, 255); // Inicialicamos la imagen del slider en negro
         progressBar.value = lifeTime;                                   // Igualamos la longitud del slider con la barra de vida
-        progressBar.maxValue = LastScore;
+        progressBar.maxValue = LastScore;                               // Inicialicamos la magnitud de la barra del slider               
     }
 	
 	// --------------------------------------------------- UPDATE ----------------------------------------------
 	void Update () {
 
 
-        lifeTime -= Time.deltaTime;
-        progressBar.value = lifeTime;
-        updateUI();
-        set_a_getKey();
+        lifeTime -= Time.deltaTime;                                     // Decrementamos en el tiempo la "barra de vida"
+        progressBar.value = lifeTime;                                   // Assignamos el valor de la vida en la barra
+        updateUI();                                                     // actualicamos el hud del nivel
+        set_a_getKey();                                                 // Generamos letra y posiciones aleatorias
 
 
+        setTimeToZero();                                             // Nos aseguramos que la barra de vida no baja de 0
 
-        if (lifeTime <= 0)
+        if (lifeTime >= LastScore)  // Si la score aconseguida es mayor o igual a la score maxima:
         {
-            lifeTime = 0;
+            lvlUP();                // en caso de subir de nivel se ejecuta
+            lvlupTime = 0;
+            while (lvlupTime < 20000)
+            {
+                lvlupTime += Time.deltaTime;
+            }
+            lvlchanger.SetActive(false);                 // activamos la imagen de transación de nivel
         }
-
-        if (lifeTime >= LastScore) {
-            lifeTime = 0;
-            LastScore = maxScoreCalc();
-            progressBar.maxValue = LastScore;
-            level++;
-            
-        }
-
-        if(level == 3)
+        
+        if (level == 3)                                                  // Augmentamos la dificultad
         {
             nTecles = 6;
         }
@@ -87,6 +91,31 @@ public class GenRandLetter : MonoBehaviour {
     }
 
 
+    // ============================================ FUNCIONES ==============================================
+    void lvlUP() {
+      
+            sliderColor.GetComponent<Image>().color = new Color32(50, 50, 50, 255); // Inicialicamos la imagen del slider en negro
+            lifeTime = 0;                               // resetea el tiempo a 0
+            LastScore = maxScoreCalc();                 // Calcula la nueva magnitud de la score maxima
+            progressBar.maxValue = LastScore;           // assigna esta nueva magnitud al slider
+            level++;                                    // augmenta en 1 el nivel    
+            lvlchanger.SetActive(true);                 // activamos la imagen de transación de nivel
+  
+                  
+          
+                    
+
+                
+            
+        
+    }
+    void setTimeToZero()
+    {
+        if (lifeTime <= 0)
+        {
+            lifeTime = 0;
+        }
+    }
     float maxScoreCalc() {
 
         if (level <= 3) {
@@ -141,48 +170,48 @@ public class GenRandLetter : MonoBehaviour {
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.W) && a == 1)
         {
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.E) && a == 2)
         {
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.R) && a == 3)
         {
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.F) && a == 5) {
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.D) && a == 4)
         { 
             score++;
             lifeTime++;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.anyKeyDown)
         {
             vides--;
             lifeTime--;
             generated = false;
-            imagensita.GetComponent<Image>().color = new Color32(191, 0, 0, 255);
+            sliderColor.GetComponent<Image>().color = new Color32(191, 0, 0, 255);
 
         }
     }
