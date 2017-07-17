@@ -17,9 +17,9 @@ public class GenRandLetter : MonoBehaviour {
     public GameObject uno;
     public GameObject dos;
 
-    public Image sliderColor;            // Slider color for feedback
+    public Image sliderColor;                 // Slider color for feedback
     public GameObject lvlchanger;             // imagen de transicion para canviar de nivel
-
+    public GameObject inGaMenu;               // game menu  
 
     public GameObject[] Tecles;
     // Time variables
@@ -36,7 +36,7 @@ public class GenRandLetter : MonoBehaviour {
     public float LastScore = 0.4f;     // Variable que rige la magnitud de la barra de vida inicial
     public int vides;                  
     public bool generated;             // Variable Bool que controla si hay alguna tecla generada en la pantalla en el momento
- 
+    public bool paused = false;        // Variable for pausing the game
   
     public Text lvlText;               // Texto que nos informa del nivel al que estamos
   
@@ -51,7 +51,7 @@ public class GenRandLetter : MonoBehaviour {
         Tecles = new GameObject[8] { Q, W, E, R , D, F, uno, dos};      // Array que contiene las teclas que se van a generar
         generated = false;
         lvlupTime = 0;
-
+        inGaMenu.SetActive(false);
 
         lvlText.text = "Lvl: " + level;                                 // Inicialicamos el texto del nivel en el "HUD"
 
@@ -59,12 +59,24 @@ public class GenRandLetter : MonoBehaviour {
         progressBar.value = lifeTime;                                   // Igualamos la longitud del slider con la barra de vida
         progressBar.maxValue = LastScore;                               // Inicialicamos la magnitud de la barra del slider               
     }
-	
-	// --------------------------------------------------- UPDATE ----------------------------------------------
-	void Update () {
 
+    // --------------------------------------------------- UPDATE ----------------------------------------------
+    void Update()
+    {
 
-        lifeTime -= Time.deltaTime;                                     // Decrementamos en el tiempo la "barra de vida"
+        if (paused) {                                                  // Si el juego esta pausado, solo se 
+            Time.timeScale = 0;
+            inGaMenu.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.Escape))
+            { 
+                paused = !paused;
+                Time.timeScale = 1;
+                inGaMenu.SetActive(false);
+            }
+        }
+        else { 
+        
+        lifeTime -= Time.deltaTime;                                      // Decrementamos en el tiempo la "barra de vida"
         progressBar.value = lifeTime;                                   // Assignamos el valor de la vida en la barra
         updateUI();                                                     // actualicamos el hud del nivel
         set_a_getKey();                                                 // Generamos letra y posiciones aleatorias
@@ -82,12 +94,12 @@ public class GenRandLetter : MonoBehaviour {
             }
             lvlchanger.SetActive(false);                 // activamos la imagen de transación de nivel
         }
-        
+
         if (level == 3)                                                  // Augmentamos la dificultad
         {
             nTecles = 6;
         }
-
+    }
     }
 
 
@@ -98,17 +110,9 @@ public class GenRandLetter : MonoBehaviour {
             lifeTime = 0;                               // resetea el tiempo a 0
             LastScore = maxScoreCalc();                 // Calcula la nueva magnitud de la score maxima
             progressBar.maxValue = LastScore;           // assigna esta nueva magnitud al slider
-            level++;                                    // augmenta en 1 el nivel    
-            lvlchanger.SetActive(true);                 // activamos la imagen de transación de nivel
-  
-                  
-          
-                    
-
-                
-            
-        
+            level++;                                    // augmenta en 1 el nivel          
     }
+
     void setTimeToZero()
     {
         if (lifeTime <= 0)
@@ -128,7 +132,7 @@ public class GenRandLetter : MonoBehaviour {
         }
        
     }
-
+    
     void updateUI() {
 
         lvlText.text = "Lvl: " + level;
@@ -161,11 +165,17 @@ public class GenRandLetter : MonoBehaviour {
 
 
     }
+
     void set_a_getKey() {
 
         generateRandomA();  // we generate random x & y and letter "a" 
-     
-        if (generated && Input.GetKeyDown(KeyCode.Q) && a == 0)
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+
+            paused = !paused;
+
+        }
+        else if (generated && Input.GetKeyDown(KeyCode.Q) && a == 0)
         {
             score++;
             lifeTime++;
@@ -200,7 +210,7 @@ public class GenRandLetter : MonoBehaviour {
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.D) && a == 4)
-        { 
+        {
             score++;
             lifeTime++;
             generated = false;
