@@ -43,9 +43,11 @@ public class GenRandLetter : MonoBehaviour {
     public int vides;                  
     public bool generated;             // Variable Bool que controla si hay alguna tecla generada en la pantalla en el momento
     public bool paused = false;        // Variable for pausing the game
+    public bool onStatistics;
     public int encerts;
     public int errors;
     public int accuracy;  
+
     // texts
     public Text lvlText;               // Texto que nos informa del nivel al que estamos
 
@@ -63,7 +65,8 @@ public class GenRandLetter : MonoBehaviour {
         inGaMenu.SetActive(false);                                      // Game pause starts at off mode
         estadistiques.SetActive(false);                                 // Statistics canvas starts at off mode
         lvlText.text = "Lvl: " + level;                                 // Inicialicamos el texto del nivel en el "HUD"
-
+        encerts = 0;                                                    // Inicialicamos n de aciertos a 0
+        errors = 0;                                                     // Inicialicamos n de errores a 0
         sliderColor.GetComponent<Image>().color = new Color32(50, 50, 50, 255); // Inicialicamos la imagen del slider en negro
         progressBar.value = lifeTime;                                   // Igualamos la longitud del slider con la barra de vida
         progressBar.maxValue = LastScore;                               // Inicialicamos la magnitud de la barra del slider               
@@ -76,7 +79,12 @@ public class GenRandLetter : MonoBehaviour {
         if (paused) {                                                  // Si el juego esta pausado, solo se 
             Time.timeScale = 0;
             inGaMenu.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if(onStatistics && Input.GetKeyDown(KeyCode.Escape))
+            {
+                back_BTN();
+
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape))
             { 
                 paused = !paused;
                 Time.timeScale = 1;
@@ -112,7 +120,7 @@ public class GenRandLetter : MonoBehaviour {
     }
 
 
-    // ============================================ FUNCIONES ==============================================
+               // ============================================ FUNCIONES ============================================== //
     void lvlUP() {
       
             sliderColor.GetComponent<Image>().color = new Color32(50, 50, 50, 255); // Inicialicamos la imagen del slider en negro
@@ -122,29 +130,28 @@ public class GenRandLetter : MonoBehaviour {
             level++;                                    // augmenta en 1 el nivel          
     }
 
+
+    // BUTTON EVENTS
     public void resume_BTN() {                          // If the resume button of the pause canvas is pressed...   
         
         paused = !paused;                               // Unpause the game
         Time.timeScale = 1;                             // activate the time
         inGaMenu.SetActive(false);                      // disable the canvas pause
 
-    }
-
+    }   
     public void estadistiques_BTN() {
 
         estadistiques.SetActive(true);
+        onStatistics = true;
+    }
+    public void back_BTN() {
 
+        estadistiques.SetActive(false);
+        onStatistics = false;
     }
 
-    void setTimeToZero()                                // If the time wents negative, its set to 0 
-    {
-        if (lifeTime <= 0)
-        {
-            lifeTime = 0;
-        }
-    }
-
-
+    
+    // SOME CALC FUNCTIONS
     float maxScoreCalc() {                              //regulates the difficulti of the next lvl 
 
         if (level <= 3) {
@@ -157,11 +164,20 @@ public class GenRandLetter : MonoBehaviour {
         }
        
     }
-    
+    void setTimeToZero()                                // If the time wents negative, its set to 0 
+    {
+        if (lifeTime <= 0)
+        {
+            lifeTime = 0;
+        }
+    }
+
+    // UI
     void updateUI() {                                  // Updates the lvl number of the screen
         lvlText.text = "Lvl: " + level;                 // changes the text
     }
 
+    // GENERATES A RANDOM LETTER:
     void generateRandomA() {                            // Generates the random letter
 
         if (!generated)                                 // if its not already generated...
@@ -180,15 +196,10 @@ public class GenRandLetter : MonoBehaviour {
             Tecles[a].SetActive(true);                  // Activates the letter generated pseudo-randomly
             Tecles[a].transform.position = new Vector2(posX, posY); // we position the generated letter on the pseudo-random generated positions
         }
-
-
-
-
-
-
     }
 
-    void set_a_getKey() {
+    // KEYBOARD EVENTS
+    void set_a_getKey() { // KEY EVENTS ==================================================================
 
         generateRandomA();  // we generate random x & y and letter "a" 
 
@@ -200,6 +211,7 @@ public class GenRandLetter : MonoBehaviour {
         else if (generated && Input.GetKeyDown(KeyCode.Q) && a == 0)
         {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
@@ -207,6 +219,7 @@ public class GenRandLetter : MonoBehaviour {
         else if (generated && Input.GetKeyDown(KeyCode.W) && a == 1)
         {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
@@ -214,6 +227,7 @@ public class GenRandLetter : MonoBehaviour {
         else if (generated && Input.GetKeyDown(KeyCode.E) && a == 2)
         {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
@@ -221,12 +235,14 @@ public class GenRandLetter : MonoBehaviour {
         else if (generated && Input.GetKeyDown(KeyCode.R) && a == 3)
         {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
         }
         else if (generated && Input.GetKeyDown(KeyCode.F) && a == 5) {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
@@ -234,6 +250,7 @@ public class GenRandLetter : MonoBehaviour {
         else if (generated && Input.GetKeyDown(KeyCode.D) && a == 4)
         {
             score++;
+            encerts++;
             lifeTime++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(20, 186, 83, 255);
@@ -242,6 +259,7 @@ public class GenRandLetter : MonoBehaviour {
         {
             vides--;
             lifeTime--;
+            errors++;
             generated = false;
             sliderColor.GetComponent<Image>().color = new Color32(191, 0, 0, 255);
 
