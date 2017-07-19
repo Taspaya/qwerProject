@@ -51,6 +51,8 @@ public class GenRandLetter : MonoBehaviour {
     public float errors;
     public float accuracy;
     public float puntuacion;
+    public float maxscore;
+    public int oldMaxscore;
     // texts
     public Text lvlText;               // Texto que nos informa del nivel al que estamos
     public Text aciertos;              // HITS
@@ -58,6 +60,7 @@ public class GenRandLetter : MonoBehaviour {
     public Text precision;             // ACCURACI
     public Text timePlayed;            // TIME
     public Text hescore;               // SCORE TEXT
+    public Text maxhscore;             // MAX SCORE EVER
     [SerializeField]                    
     public Slider progressBar;
    
@@ -95,7 +98,7 @@ public class GenRandLetter : MonoBehaviour {
             else if (onCredits && Input.GetKeyDown(KeyCode.Escape)) {
 
                  credits.SetActive(false);
-                onCredits = false;
+                 onCredits = false;
             }
             else if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -179,7 +182,20 @@ public class GenRandLetter : MonoBehaviour {
         TimeFunction();
         timePlayed.text = "TIME PLAYED = " + mins + " : " + taimu;
         score_calc();
-        hescore.text = "Score: " + puntuacion;
+        if (puntuacion < 0)
+        {
+            puntuacion = 0;
+        }
+        hescore.text = "Score: " + puntuacion; // =) DPM
+      
+        maxscore = PlayerPrefs.GetFloat("Maxscore");
+        if (puntuacion > maxscore)
+        {
+            PlayerPrefs.SetFloat("Maxscore", puntuacion);
+        }
+        maxscore = PlayerPrefs.GetInt("Maxscore");
+       // maxscore = Mathf.FloorToInt(maxscore);
+        maxhscore.text = "Last Record: " + puntuacion;
     }
     public void credits_BTN() {
         onCredits = true;
@@ -220,11 +236,11 @@ public class GenRandLetter : MonoBehaviour {
     }   
     void score_calc() {
 
-        puntuacion = accuracy * taimu;
+        puntuacion = ((accuracy * taimu) + encerts) - (4*errors);
         puntuacion = Mathf.FloorToInt(puntuacion);      // CAST FLOAT TO INT
     }
     
-    
+
     // UI
     void updateUI() {                                   // Updates the lvl number of the screen
         lvlText.text = "Lvl: " + level;                 // changes the text
@@ -325,6 +341,13 @@ public class GenRandLetter : MonoBehaviour {
 
     public void endGame()
     {
+        maxscore = PlayerPrefs.GetFloat("Maxscore");
+        if (puntuacion > maxscore)
+        {
+            PlayerPrefs.SetFloat("Maxscore", puntuacion);
+        }
+
         Application.Quit();
+
     }
 }
