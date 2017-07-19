@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class GenRandLetter : MonoBehaviour {
 
 
@@ -32,9 +33,10 @@ public class GenRandLetter : MonoBehaviour {
     public float lifeTime;             // Variable tiempo ""vida""
     public float keyActiveTime;        // Variable tiempo que esta activa la tecla
     public float lvlupTime;            // Variable tiempo que tardara en desaparecer la imagen de cambio de nivel
-
+    public float taimu;                // Variable tiempo jugado
+    public int mins;                   // Variable minutos jugados
     // Variables
-    public float posX, posY;           // Variable x e y random que tendrà la letra activa
+    public float posX, posY;           // Variable X e Y random que tendrà la letra activa
     public int nTecles;                // Variable numero de teclas activas (segun la dificultad)      
     public int a;                      // Variable numero de la tecla que se generara aleatoriamente
     public int score = 0;              // Variable que indica el numero de aciertos
@@ -44,13 +46,16 @@ public class GenRandLetter : MonoBehaviour {
     public bool generated;             // Variable Bool que controla si hay alguna tecla generada en la pantalla en el momento
     public bool paused = false;        // Variable for pausing the game
     public bool onStatistics;
-    public int encerts;
-    public int errors;
-    public int accuracy;  
+    public float encerts;
+    public float errors;
+    public float accuracy;  
 
     // texts
     public Text lvlText;               // Texto que nos informa del nivel al que estamos
-
+    public Text aciertos;              // HITS
+    public Text fallos;                // MISSES
+    public Text precision;             // ACCURACI
+    public Text timePlayed;            // TIME
 
     [SerializeField]                    
     public Slider progressBar;
@@ -69,7 +74,8 @@ public class GenRandLetter : MonoBehaviour {
         errors = 0;                                                     // Inicialicamos n de errores a 0
         sliderColor.GetComponent<Image>().color = new Color32(50, 50, 50, 255); // Inicialicamos la imagen del slider en negro
         progressBar.value = lifeTime;                                   // Igualamos la longitud del slider con la barra de vida
-        progressBar.maxValue = LastScore;                               // Inicialicamos la magnitud de la barra del slider               
+        progressBar.maxValue = LastScore;                               // Inicialicamos la magnitud de la barra del slider   
+        taimu = Time.deltaTime;            
     }
 
     // --------------------------------------------------- UPDATE ----------------------------------------------
@@ -91,8 +97,8 @@ public class GenRandLetter : MonoBehaviour {
                 inGaMenu.SetActive(false);
             }
         }
-        else { 
-        
+        else {
+        taimu += Time.deltaTime;
         lifeTime -= Time.deltaTime;                                      // Decrementamos en el tiempo la "barra de vida"
         progressBar.value = lifeTime;                                   // Assignamos el valor de la vida en la barra
         updateUI();                                                     // actualicamos el hud del nivel
@@ -139,15 +145,31 @@ public class GenRandLetter : MonoBehaviour {
         inGaMenu.SetActive(false);                      // disable the canvas pause
 
     }   
-    public void estadistiques_BTN() {
+    public void estadistiques_BTN() {                   // If the statistics button of the pause canvas is pressed...
 
-        estadistiques.SetActive(true);
-        onStatistics = true;
+        estadistiques.SetActive(true);                  // Activate the canvas
+        accuracyCalc();                                 // Calls the function for calculing the accuracy
+        statists_BTN();                                 // Writes te texts
+        onStatistics = true;                            // Activates the bool (true)
     }
-    public void back_BTN() {
+    public void back_BTN() {                            // If the back button of the statistics canvas is pressed...
 
-        estadistiques.SetActive(false);
-        onStatistics = false;
+        estadistiques.SetActive(false);                 // Dissables the statistics canvas
+        onStatistics = false;                           // Sets the bool on false
+    }
+    public void statists_BTN() {
+
+        aciertos.text = "HITS: " + encerts;
+        fallos.text = "MISSES: " + errors;
+        if (encerts == 0 && errors == 0)
+        {
+            precision.text = "ACCURACY: " + 0 + "%";
+        }
+        else
+        {
+            precision.text = "ACCURACY: " + accuracy + "%";
+        }
+        TimeFunction();
     }
 
     
@@ -171,11 +193,25 @@ public class GenRandLetter : MonoBehaviour {
             lifeTime = 0;
         }
     }
+    void TimeFunction() {
+        taimu = Mathf.FloorToInt(taimu);      // CAST FLOAT TO INT
+        if (taimu >= 60)
+        {
+            mins++;
+            taimu = taimu % 60;
+        }
+        timePlayed.text = "TIME PLAYED = " + mins + " : " + taimu + " mins."; 
+    }
+    void accuracyCalc() {
 
+       accuracy = (encerts / (encerts + errors)) * 100;        
+    }
     // UI
-    void updateUI() {                                  // Updates the lvl number of the screen
+    void updateUI() {                                   // Updates the lvl number of the screen
         lvlText.text = "Lvl: " + level;                 // changes the text
     }
+
+
 
     // GENERATES A RANDOM LETTER:
     void generateRandomA() {                            // Generates the random letter
