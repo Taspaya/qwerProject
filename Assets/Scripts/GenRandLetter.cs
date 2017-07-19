@@ -25,7 +25,7 @@ public class GenRandLetter : MonoBehaviour {
     public GameObject inGaMenu;               // game pad menu  
     public Button resumeBTN;                  // Return button
     public GameObject estadistiques;          // Statistics screen
-
+    public GameObject credits;
     // Keys
     public GameObject[] Tecles;
     
@@ -46,17 +46,18 @@ public class GenRandLetter : MonoBehaviour {
     public bool generated;             // Variable Bool que controla si hay alguna tecla generada en la pantalla en el momento
     public bool paused = false;        // Variable for pausing the game
     public bool onStatistics;
+    public bool onCredits;
     public float encerts;
     public float errors;
-    public float accuracy;  
-
+    public float accuracy;
+    public float puntuacion;
     // texts
     public Text lvlText;               // Texto que nos informa del nivel al que estamos
     public Text aciertos;              // HITS
     public Text fallos;                // MISSES
     public Text precision;             // ACCURACI
     public Text timePlayed;            // TIME
-
+    public Text hescore;               // SCORE TEXT
     [SerializeField]                    
     public Slider progressBar;
    
@@ -69,6 +70,7 @@ public class GenRandLetter : MonoBehaviour {
         lvlupTime = 0;
         inGaMenu.SetActive(false);                                      // Game pause starts at off mode
         estadistiques.SetActive(false);                                 // Statistics canvas starts at off mode
+        credits.SetActive(false);
         lvlText.text = "Lvl: " + level;                                 // Inicialicamos el texto del nivel en el "HUD"
         encerts = 0;                                                    // Inicialicamos n de aciertos a 0
         errors = 0;                                                     // Inicialicamos n de errores a 0
@@ -85,13 +87,18 @@ public class GenRandLetter : MonoBehaviour {
         if (paused) {                                                  // Si el juego esta pausado, solo se 
             Time.timeScale = 0;
             inGaMenu.SetActive(true);
-            if(onStatistics && Input.GetKeyDown(KeyCode.Escape))
+            if (onStatistics && Input.GetKeyDown(KeyCode.Escape))
             {
                 back_BTN();
 
             }
+            else if (onCredits && Input.GetKeyDown(KeyCode.Escape)) {
+
+                 credits.SetActive(false);
+                onCredits = false;
+            }
             else if (Input.GetKeyDown(KeyCode.Escape))
-            { 
+            {
                 paused = !paused;
                 Time.timeScale = 1;
                 inGaMenu.SetActive(false);
@@ -170,9 +177,15 @@ public class GenRandLetter : MonoBehaviour {
             precision.text = "ACCURACY: " + accuracy + "%";
         }
         TimeFunction();
+        timePlayed.text = "TIME PLAYED = " + mins + " : " + taimu;
+        score_calc();
+        hescore.text = "Score: " + puntuacion;
+    }
+    public void credits_BTN() {
+        onCredits = true;
+        credits.SetActive(true);
     }
 
-    
     // SOME CALC FUNCTIONS
     float maxScoreCalc() {                              //regulates the difficulti of the next lvl 
 
@@ -200,12 +213,18 @@ public class GenRandLetter : MonoBehaviour {
             mins++;
             taimu = taimu % 60;
         }
-        timePlayed.text = "TIME PLAYED = " + mins + " : " + taimu + " mins."; 
     }
     void accuracyCalc() {
 
        accuracy = (encerts / (encerts + errors)) * 100;        
+    }   
+    void score_calc() {
+
+        puntuacion = accuracy * taimu;
+        puntuacion = Mathf.FloorToInt(puntuacion);      // CAST FLOAT TO INT
     }
+    
+    
     // UI
     void updateUI() {                                   // Updates the lvl number of the screen
         lvlText.text = "Lvl: " + level;                 // changes the text
@@ -300,5 +319,12 @@ public class GenRandLetter : MonoBehaviour {
             sliderColor.GetComponent<Image>().color = new Color32(191, 0, 0, 255);
 
         }
+    }
+
+    // END GAME
+
+    public void endGame()
+    {
+        Application.Quit();
     }
 }
